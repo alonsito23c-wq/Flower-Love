@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tus Flores Amarillas - by alonsito23c-wq</title>
+  <style>
+    /* Estilos base y fondo */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Georgia', serif; /* Un tipo de letra más romántico */
+      overflow: hidden;
+      cursor: pointer; /* Indica que se puede interactuar */
+    }
+
+    /* Contenedor del mensaje principal */
+    .message-container {
+      text-align: center;
+      margin-bottom: 3rem;
+      z-index: 10; /* Asegura que esté al frente */
+      opacity: 0;
+      animation: fadeIn 2s 3s forwards; /* Aparece después de que las flores crecen */
+    }
+    h1 { font-size: 2.5rem; color: #ffd868; text-shadow: 0 0 10px rgba(255, 216, 104, 0.7); }
+    p { color: #cfd8dc; font-size: 1.2rem; margin-top: 0.5rem; }
+
+    /* El "escenario" donde crecen las flores */
+    .flower-stage {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 30px; /* Espacio entre flores */
+    }
+
+    /* Estilo de la flor individual (el "tallo") */
+    .flower {
+      position: relative;
+      width: 120px;
+      height: 350px;
+      display: flex;
+      justify-content: center;
+      transform-origin: bottom center;
+      animation: growStem 2s ease-out forwards;
+    }
+
+    /* Tallo */
+    .stem {
+      position: absolute;
+      bottom: 0;
+      width: 10px;
+      height: 250px;
+      background: linear-gradient(to top, #2e7d32, #66bb6a);
+      border-radius: 5px;
+    }
+
+    /* Hojas */
+    .leaf {
+      position: absolute;
+      width: 45px;
+      height: 25px;
+      background: #4caf50;
+      border-radius: 40px 0;
+    }
+    .leaf.left { bottom: 100px; left: -40px; transform: rotate(-30deg); }
+    .leaf.right { bottom: 160px; right: -40px; transform: scaleX(-1) rotate(-30deg); }
+
+    /* Cabeza de la flor (pétalos + centro) */
+    .flower-head {
+      position: absolute;
+      top: 60px; /* Ajustado para que el tallo la sostenga */
+      width: 120px;
+      height: 120px;
+      transform-origin: center;
+      opacity: 0;
+      animation: bloom 1.5s 1.8s ease-out forwards;
+    }
+
+    /* El centro naranja */
+    .center-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: #ff9800;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255, 152, 0, 0.9);
+      z-index: 10;
+    }
+
+    /* Los pétalos amarillos */
+    .petal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 30px;
+      height: 65px;
+      background: linear-gradient(to top, #ffe082, #ffd54f);
+      border-radius: 50%;
+      transform-origin: bottom center;
+      margin-left: -15px;
+      margin-top: -65px;
+      box-shadow: 0 0 12px rgba(255, 213, 79, 0.6);
+    }
+
+    /* Rotación de pétalos para formar la flor */
+    .petal:nth-child(1) { transform: rotate(0deg); }
+    .petal:nth-child(2) { transform: rotate(40deg); }
+    .petal:nth-child(3) { transform: rotate(80deg); }
+    .petal:nth-child(4) { transform: rotate(120deg); }
+    .petal:nth-child(5) { transform: rotate(160deg); }
+    .petal:nth-child(6) { transform: rotate(200deg); }
+    .petal:nth-child(7) { transform: rotate(240deg); }
+    .petal:nth-child(8) { transform: rotate(280deg); }
+    .petal:nth-child(9) { transform: rotate(320deg); }
+
+    /* Luces flotantes */
+    .light {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 150, 0.8);
+      border-radius: 50%;
+      filter: blur(2px);
+      animation: floatLights 4s infinite ease-in-out;
+      opacity: 0;
+    }
+
+    /* --- Animaciones CSS --- */
+    @keyframes growStem {
+      0% { transform: scaleY(0); }
+      100% { transform: scaleY(1); }
+    }
+    @keyframes bloom {
+      0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes floatLights {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+      20% { opacity: 1; }
+    }
+  </style>
+</head>
+<body onclick="createMoreLights()">
+
+  <!-- 1. El Mensaje Personalizado -->
+  <div class="message-container">
+    <h1 id="title">Una flor para una hermosa pinguinita</h1>
+    <p id="note">Mi querida nicolita, talvez no pude haberte entregado personalmente tus flores pero puedo hacerlo por aca quiero que sepas que me importas mucho y eres los mas importante para mi vida te amo un monton, Feliz comienzo de primavera mi pinguinito</p>
+    <p style="font-size: 0.9rem; margin-top: 10px; color: #aaa;">(Haz clic en la pantalla)</p>
+  </div>
+
+  <!-- 2. El Escenario de las Flores -->
+  <div class="flower-stage">
+    
+    <!-- Flor 1 -->
+    <div class="flower">
+      <div class="stem">
+        <div class="leaf left"></div>
+        <div class="leaf right"></div>
+      </div>
+      <div class="flower-head">
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="center-circle"></div>
+      </div>
+    </div>
+
+    <!-- Flor 2 (central, un poco más alta) -->
+    <div class="flower" style="height: 380px; animation-delay: 0.5s;">
+      <div class="stem" style="height: 280px;">
+        <div class="leaf left"></div>
+        <div class="leaf right"></div>
+      </div>
+      <div class="flower-head" style="animation-delay: 2.3s;">
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="center-circle"></div>
+      </div>
+    </div>
+
+    <!-- Flor 3 -->
+    <div class="flower" style="animation-delay: 1s;">
+      <div class="stem">
+        <div class="leaf left"></div>
+        <div class="leaf right"></div>
+      </div>
+      <div class="flower-head" style="animation-delay: 2.8s;">
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        <div class="center-circle"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 3. Un poco de interactividad -->
+  <script>
+    function createMoreLights() {
+      const stage = document.body;
+      for (let i = 0; i < 15; i++) {
+        const light = document.createElement('div');
+        light.className = 'light';
+        light.style.left = Math.random() * 100 + 'vw';
+        light.style.top = Math.random() * 100 + 'vh';
+        light.style.animationDelay = Math.random() * 2 + 's';
+        light.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        stage.appendChild(light);
+        // Eliminar las luces después de la animación para no saturar
+        setTimeout(() => light.remove(), 5000);
+      }
+    }
+  </script>
+</body>
+</html>
